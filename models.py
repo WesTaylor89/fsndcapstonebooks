@@ -10,7 +10,7 @@ setup_db(app)
 
 def setup_db(app):
     app.config["SQLALCHEMY_DATABASE_URI"] = \
-        'postgresql://Wes:password@localhost:5432/fsndcapstone'
+        'postgres://alfdtfgfwhhwoy:b780cc7da8953139ad45f56e0257301d47caceec8f53b1cfb505967d2d84008a@ec2-52-202-146-43.compute-1.amazonaws.com:5432/d2ivnk6gdrr6q6'
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
