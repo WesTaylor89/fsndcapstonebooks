@@ -1,13 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
-from models import Book, db, setup_db
+from models import Book, db, setup_db, BookSigning
 from auth import AuthError, requires_auth
+from datetime import datetime
 
 
 def create_app():
     app = Flask(__name__)
     setup_db(app)
     CORS(app)
+
+    CORS(app, resources={r"*": {"origins": "*"}})
 
     @app.after_request
     def after_request(response):
@@ -31,10 +34,7 @@ def create_app():
                 'books': books_list
             }), 200
         except:
-            return jsonify({
-                "success": False,
-                "error": "Bad request"
-            }), 400
+            abort(400)
 
     @app.route("/books/<string:author>", methods=["GET"])
     @requires_auth(permission="search:books")
@@ -51,10 +51,7 @@ def create_app():
                 'books': books_list
             }), 200
         except:
-            return jsonify({
-                "success": False,
-                "error": "Bad request"
-            }), 400
+            abort(400)
 
     @app.route("/books/<string:title>", methods=["GET"])
     @requires_auth(permission="search:books")
@@ -71,10 +68,7 @@ def create_app():
                 'books': books_list
             })
         except:
-            return jsonify({
-                "success": False,
-                "error": "Bad request"
-            }), 400
+            abort(400)
 
     @app.route("/books/new", methods=["POST"])
     @requires_auth(permission="post:new_book")
@@ -93,12 +87,10 @@ def create_app():
                 'book': new.book_detail()
             }), 200
         except:
-            return jsonify({
-                "success": False,
-                "error": "Bad request"
-            }), 400
+            abort(400)
 
     @app.route("/books/<int:book_id>", methods=["PATCH"])
+    @requires_auth(permission="patch:books")
     def edit_book(book_id, payload):
         data = request.get_json()
 
@@ -127,12 +119,10 @@ def create_app():
                 "book": [updated_book.book_detail()]
             }), 200
         except:
-            return jsonify({
-                "success": False,
-                "error": "Bad request"
-            }), 400
+            abort(400)
 
     @app.route("/books/<int:book_id>", methods=["DELETE"])
+    @requires_auth("delete:book")
     def delete_book(book_id, payload):
         try:
             chosen_book = Book.query.filter(Book.id == book_id).one_or_none()
@@ -144,10 +134,33 @@ def create_app():
                 "deleted": book_id
             }), 200
         except:
+            abort(400)
+
+    @app.route("/books/booksignings", methods=["GET"])
+    @requires_auth("search:booksignings")
+    def booksignings():
+        try:
+            upcoming_booksignings_obj = db.session.query(BookSigning).join(Book)\
+                .filter(BookSigning.start_time > datetime.now()).all()
+            # print(upcoming_booksignings_obj)
+
+            upcoming_booksignings = []
+            for booksigning in upcoming_booksignings_obj:
+                upcoming = ({
+                    "book_title": booksigning.book.title,
+                    "book_author": booksigning.book.author,
+                    "booksigning_start_time": booksigning.start_time
+                })
+                upcoming_booksignings.append(upcoming)
+
+            # print(upcoming_booksignings)
+
             return jsonify({
-                "success": False,
-                "error": "Bad request"
-            }), 400
+                "success": True,
+                "upcoming_signings": upcoming_booksignings
+            }), 200
+        except:
+            return abort(400)
 
     '''
         Error handler for 400
@@ -188,7 +201,62 @@ def create_app():
     return app
 
 
+"""
+Run App
+"""
+
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True)
+
+
+"""
+Populates DB with dummy data
+"""
+
+# book1 = Book(title="Harry Potter",
+#              author="J.K.Rowling",
+#              genre="Fantasy",
+#              description="Books about wizards")
+#
+# book2 = Book(title="Lord of the rings",
+#              author="J.R.R.Tolkien",
+#              genre="Fantasy",
+#              description="Elves, Trolls, Goblins etc")
+#
+# book3 = Book(title="Jamie's kitchen",
+#              author="Jamie Oliver",
+#              genre="Cook Book",
+#              description="Jamie's favourite recipes")
+#
+# book4 = Book(title="If it Bleeds",
+#              author="Stephen King",
+#              genre="Horror",
+#              description="4 Stories in 1 book")
+#
+# book5 = Book(title="History of World War 2",
+#              author="Chris McNab",
+#              genre="History",
+#              description="Events of 1939-1945")
+#
+# db.session.add(book1)
+# db.session.add(book2)
+# db.session.add(book3)
+# db.session.add(book4)
+# db.session.add(book5)
+# db.session.commit()
+
+# booksigning1 = BookSigning(start_time="2020-07-20 14:00:00",
+#                            book_id="1")
+#
+# booksigning2 = BookSigning(start_time="2020-07-22 14:00:00",
+#                            book_id="2")
+#
+# booksigning3 = BookSigning(start_time="2020-07-22 16:00:00",
+#                            book_id="2")
+#
+# db.session.add(booksigning1)
+# db.session.add(booksigning2)
+# db.session.add(booksigning3)
+# db.session.commit()
