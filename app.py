@@ -36,11 +36,12 @@ def create_app():
         except:
             abort(400)
 
-    @app.route("/books/<string:author>", methods=["GET"])
+    @app.route("/books/author", methods=["POST"])
     @requires_auth(permission="search:books")
-    def books_by_author(author, payload):
+    def books_by_author(payload):
         try:
-            books = Book.query.filter(Book.author == author).order_by(
+            search_data = request.get_json()['searchTerm']
+            books = Book.query.filter(Book.author.ilike(f'%{search_data}%')).all().order_by(
                 Book.date_added.desc())
             books_list = []
             for book in books:
@@ -53,11 +54,12 @@ def create_app():
         except:
             abort(400)
 
-    @app.route("/books/<string:title>", methods=["GET"])
+    @app.route("/books/title", methods=["POST"])
     @requires_auth(permission="search:books")
-    def books_by_title(title, payload):
+    def books_by_title(payload):
         try:
-            books = Book.query.filter(Book.title == title).order_by(
+            search_data = request.get_json()['searchTerm']
+            books = Book.query.filter(Book.title.ilike(f'%{search_data}%')).all().order_by(
                 Book.date_added.desc())
             books_list = []
             for book in books:
@@ -137,7 +139,7 @@ def create_app():
             abort(400)
 
     @app.route("/books/booksignings", methods=["GET"])
-    @requires_auth("search:booksignings")
+    @requires_auth("search:books")
     def booksignings():
         try:
             upcoming_booksignings_obj = db.session.query(BookSigning).join(Book)\
