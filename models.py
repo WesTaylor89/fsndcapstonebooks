@@ -10,13 +10,13 @@ setup_db(app)
 
 def setup_db(app):
     # Production DB
-    # app.config["SQLALCHEMY_DATABASE_URI"] = \
-    #     'postgres://alfdtfgfwhhwoy:b780cc7da8953139ad45f56e0257301d47caceec8' \
-    #     'f53b1cfb505967d2d84008a@ec2-52-202-146-43.compute-1.amazonaws.com:5432/d2ivnk6gdrr6q6'
+    app.config["SQLALCHEMY_DATABASE_URI"] = \
+        'postgres://alfdtfgfwhhwoy:b780cc7da8953139ad45f56e0257301d47caceec8' \
+        'f53b1cfb505967d2d84008a@ec2-52-202-146-43.compute-1.amazonaws.com:5432/d2ivnk6gdrr6q6'
 
     # Local DB
-    app.config["SQLALCHEMY_DATABASE_URI"] = \
-        'postgres://Wes:password@localhost:5432/fsndcapstone'
+    # app.config["SQLALCHEMY_DATABASE_URI"] = \
+    #     'postgres://Wes:password@localhost:5432/fsndcapstone'
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
