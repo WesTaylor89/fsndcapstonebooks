@@ -36,7 +36,7 @@ def get_token_auth_header():
     if not auth_header:
         raise AuthError({
             'code': 'Header missing',
-            'description': 'Authorization header is not present'
+            'description': 'Authorization header is expected.'
         }, 401)
 
     header_split = auth_header.split(' ')
@@ -49,7 +49,7 @@ def get_token_auth_header():
     if header_split[0].lower() != 'bearer':
         raise AuthError({
             'code': 'Incorrect Header',
-            'description': 'Authorization header is not formatted correct'
+            'description': 'Authorization header must start with "Bearer".'
         }, 401)
 
     return header_split[1]
@@ -96,6 +96,12 @@ def verify_decode_jwt(token):
     unverified_header = jwt.get_unverified_header(token)
 
     rsa_key = {}
+
+    if 'kid' not in unverified_header:
+        raise AuthError({
+            'code': 'invalid_header',
+            'description': 'Authorization malformed.'
+        }, 401)
 
     for key in jwks['keys']:
         if key['kid'] == unverified_header['kid']:

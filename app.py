@@ -25,6 +25,7 @@ def create_app():
     def home():
         try:
             books = Book.query.order_by(Book.date_added.desc())
+            # print(books)
             books_list = []
             for book in books:
                 books_list.append(book.book_detail())
@@ -140,7 +141,7 @@ def create_app():
 
     @app.route("/books/booksignings", methods=["GET"])
     @requires_auth("search:books")
-    def booksignings():
+    def booksignings(payload):
         try:
             upcoming_booksignings_obj = db.session.query(BookSigning).join(Book)\
                 .filter(BookSigning.start_time > datetime.now()).all()
@@ -210,7 +211,7 @@ Run App
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080)
 
 
 """
