@@ -41,8 +41,7 @@ def create_app():
     def books_by_author(payload):
         try:
             search_data = request.get_json()['searchTerm']
-            books = Book.query.filter(Book.author.ilike(f'%{search_data}%')).all().order_by(
-                Book.date_added.desc())
+            books = Book.query.filter(Book.author.ilike(f'%{search_data}%')).all()
             books_list = []
             for book in books:
                 books_list.append(book.book_detail())
@@ -59,8 +58,7 @@ def create_app():
     def books_by_title(payload):
         try:
             search_data = request.get_json()['searchTerm']
-            books = Book.query.filter(Book.title.ilike(f'%{search_data}%')).all().order_by(
-                Book.date_added.desc())
+            books = Book.query.filter(Book.title.ilike(f'%{search_data}%')).all()
             books_list = []
             for book in books:
                 books_list.append(book.book_detail())
@@ -93,10 +91,12 @@ def create_app():
 
     @app.route("/books/<int:book_id>", methods=["PATCH"])
     @requires_auth(permission="patch:books")
-    def edit_book(book_id, payload):
+    def edit_book(payload, book_id):
         data = request.get_json()
 
         chosen_book = Book.query.filter(Book.id == book_id).one_or_none()
+        if chosen_book is None:
+            abort(404)
 
         try:
             new_title = data['title']
@@ -124,12 +124,15 @@ def create_app():
             abort(400)
 
     @app.route("/books/<int:book_id>", methods=["DELETE"])
-    @requires_auth("delete:book")
-    def delete_book(book_id, payload):
+    @requires_auth(permission="delete:book")
+    def delete_book(payload, book_id):
         try:
             chosen_book = Book.query.filter(Book.id == book_id).one_or_none()
+            if chosen_book is None:
+                abort(404)
 
-            db.delete(chosen_book)
+            db.session.delete(chosen_book)
+            db.session.commit()
 
             return jsonify({
                 "success": True,

@@ -7,7 +7,7 @@ load_dotenv()
 db = SQLAlchemy()
 
 database_path = os.getenv('DATABASE_URL')
-
+database_path = 'postgres://Wes:password@localhost:5432/fsndcapstone'
 
 # ---------------------------------------------------------
 # setup_db(app)
@@ -19,7 +19,10 @@ def setup_db(app, db_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    # db.create_all()
+
+    # Uncomment db.drop_all() if running unittests
+    db.drop_all()
+    db.create_all()
 
 
 class Book(db.Model):

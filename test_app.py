@@ -7,12 +7,12 @@ from app import create_app
 from models import setup_db, Book, BookSigning
 from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 # user_token = os.getenv('user_token')
 # admin_token = os.getenv('admin_token')
-user_token='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InB6UWFBZHFCbXhmTzdMRjdyRmt6QyJ9.eyJpc3MiOiJodHRwczovL3d0NTk3LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJGeTJnV0MxazBKRHFTUlJBbDlxVTZCQ0hzWEJybXp2dUBjbGllbnRzIiwiYXVkIjoiRlNORENhcHN0b25lIiwiaWF0IjoxNTk0MDU2NTI1LCJleHAiOjE1OTQxNDI5MjUsImF6cCI6IkZ5MmdXQzFrMEpEcVNSUkFsOXFVNkJDSHNYQnJtenZ1Iiwic2NvcGUiOiJzZWFyY2g6Ym9va3MiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJwZXJtaXNzaW9ucyI6WyJzZWFyY2g6Ym9va3MiXX0.SQ59qjH7aYJXJneahYoqLR2U-QjxsDsuV1HXFCfuvPOAZetX0ANWy9VAipH9gQhkUd3osBKMryrmPzfq62JdpVBioKGfTrhlJRIxtDmcCbyF1CQfYGJIKQECjav_EEKWvbalpL2UUX4zJyzvJ866wc7ZpTNxglVXkhCWlPrSZaihPTqguEpzRm6fDo9zFCuubiMGrY-YUJ1FiC1Y98ZVXRKKttCc2m4Tqr4l5h8z0f6zCKEf3Azgr4foehZH9PzmOlyF_SDwoY0KQnFut5EHuLFnSXxRFahhy-YKdfBP2CffPtkDaNipIGBSMSA_tmMSkoipBtuicRawV_eW3iSJ0A'
-admin_token='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InB6UWFBZHFCbXhmTzdMRjdyRmt6QyJ9.eyJpc3MiOiJodHRwczovL3d0NTk3LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJGeTJnV0MxazBKRHFTUlJBbDlxVTZCQ0hzWEJybXp2dUBjbGllbnRzIiwiYXVkIjoiRlNORENhcHN0b25lIiwiaWF0IjoxNTk0MDU2NDc2LCJleHAiOjE1OTQxNDI4NzYsImF6cCI6IkZ5MmdXQzFrMEpEcVNSUkFsOXFVNkJDSHNYQnJtenZ1Iiwic2NvcGUiOiJzZWFyY2g6Ym9va3MgcG9zdDpuZXdfYm9vayBkZWxldGU6Ym9vayBwYXRjaDpib29rcyIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyIsInBlcm1pc3Npb25zIjpbInNlYXJjaDpib29rcyIsInBvc3Q6bmV3X2Jvb2siLCJkZWxldGU6Ym9vayIsInBhdGNoOmJvb2tzIl19.FQELMkInT50oQ7dq8t92lpXc9sVJjUlGD7WfZzz14K6sGOvjBX1cTcqqDBpbE4Mf9WnOdCSEpHjpzQvPWEztJ7_Ohl_WN0Ri8yEGkI1uiK-2KMH70P2mNM2XiYWwFtiRf1O_eZSAKMmCFhb3hEMMio_nIA_dcqnOORujw_zOCvY8U6_l3hJxJOS5Psdf02DZeLZl1WgkIXi42vFZOkA6vPpovu9XDSJQoN6vEL1NfWnF8zXw9YHbOvNz1rzUnXKX9cvZz1JpfTW35HkmORdqUjNZUef1ieFvgA9tPpxFn5GD6-Iuiuq-iaxu6vJxw9OIY-aC5AM4Wi1ipkNnvb5Uqw'
+user_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InB6UWFBZHFCbXhmTzdMRjdyRmt6QyJ9.eyJpc3MiOiJodHRwczovL3d0NTk3LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJGeTJnV0MxazBKRHFTUlJBbDlxVTZCQ0hzWEJybXp2dUBjbGllbnRzIiwiYXVkIjoiRlNORENhcHN0b25lIiwiaWF0IjoxNTk0MTQ5MjY2LCJleHAiOjE1OTQyMzU2NjYsImF6cCI6IkZ5MmdXQzFrMEpEcVNSUkFsOXFVNkJDSHNYQnJtenZ1Iiwic2NvcGUiOiJzZWFyY2g6Ym9va3MiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJwZXJtaXNzaW9ucyI6WyJzZWFyY2g6Ym9va3MiXX0.0-TBQFSCHyUAl84VJVCH6dfJbaufekXXh73uIEp9FCMWnanpeqjA61VqWZrw6e1v3_mno_yt1V7arW4HQgWZudfBYea7_Q2wtkzKTvYp1xPvPKEabhZYpUqKUc7_-Nk3S9uyD0QsolzWOuYVgSUDGlxGystLO6vVigIFjqScYUtxPG7Yqq8hvATUHu-thFGVrFwFWUsxOv7syI3FQ1dIOMfVBENFpYdBa8p2y3aw8aIzGlvQGV3kZpusfEHerlaIQH8KGqnSuv4PLqnWShIq0Ni7hacLXGM4DeUqOmcUUWgR1gBu50OozRfcUZkKk8XhYzDBZQZRNyBCmaMXdGMqJQ"
+admin_token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InB6UWFBZHFCbXhmTzdMRjdyRmt6QyJ9.eyJpc3MiOiJodHRwczovL3d0NTk3LmV1LmF1dGgwLmNvbS8iLCJzdWIiOiJGeTJnV0MxazBKRHFTUlJBbDlxVTZCQ0hzWEJybXp2dUBjbGllbnRzIiwiYXVkIjoiRlNORENhcHN0b25lIiwiaWF0IjoxNTk0MTQ4NzA1LCJleHAiOjE1OTQyMzUxMDUsImF6cCI6IkZ5MmdXQzFrMEpEcVNSUkFsOXFVNkJDSHNYQnJtenZ1Iiwic2NvcGUiOiJzZWFyY2g6Ym9va3MgcG9zdDpuZXdfYm9vayBkZWxldGU6Ym9vayBwYXRjaDpib29rcyIsImd0eSI6ImNsaWVudC1jcmVkZW50aWFscyIsInBlcm1pc3Npb25zIjpbInNlYXJjaDpib29rcyIsInBvc3Q6bmV3X2Jvb2siLCJkZWxldGU6Ym9vayIsInBhdGNoOmJvb2tzIl19.c_ZHCMtpV8-tXQOurqo7Ga084DHjdu6y-HQ1RK02MW2RJl3T6dvVH5F2hs800oB_4rd4ADrkatFdCCZLUPR8NggEwOe-92u1r_jgngv4S834BFR9vPMMDeYjvK29nZT2gfSDRK_UsiIvKxn4oo9uh8Hw-uBD_N2oCXgv9whG5YptpBBwTmJui8NwD2wpQeI14BYCNnvO68Ncnicn5dKL5d1_ZZSqoaGv1fXuJJIojUYRRlbrdKMEFkg41NtFQg7zCU8EkZaUxDjTK5jtTSr49kZrjjgqnTQAEJIyp36xKraLC5pTo8VqKcvkaLjTfCYQplpOMNDlLbUtcbpGyjHeXA"
 
 class BookShopAppTestCase(unittest.TestCase):
 
@@ -27,7 +27,7 @@ class BookShopAppTestCase(unittest.TestCase):
         setup_db(self.app, self.database_path)
 
         self.new_book = {
-            'title': 'Harry Potter',
+            'title': 'Harry1 Potter',
             'author': 'JKRowling',
             'genre': 'Fantasy',
             'description': 'Books'
@@ -46,19 +46,21 @@ class BookShopAppTestCase(unittest.TestCase):
 
             self.db.create_all()
 
-            # book1 = Book(title="Harry Potter",
-            #              author="JKRowling",
-            #              genre="Fantasy",
-            #              description="Books about wizards")
-            #
-            # self.db.session.add(book1)
-            # self.db.session.commit()
-            #
-            # booksigning = BookSigning(start_time="2020-23-07 14:00:00",
-            #                           book_id=1)
-            #
-            # self.db.session.add(booksigning)
-            # self.db.session.commit()
+            # populate test db with dummy data
+
+            book1 = Book(title="Harry Potter",
+                         author="JKRowling",
+                         genre="Fantasy",
+                         description="Books about wizards")
+
+            self.db.session.add(book1)
+            self.db.session.commit()
+
+            booksigning = BookSigning(start_time="2020-07-22 14:00:00",
+                                      book_id=1)
+
+            self.db.session.add(booksigning)
+            self.db.session.commit()
 
     def tearDown(self):
         pass
@@ -89,7 +91,7 @@ class BookShopAppTestCase(unittest.TestCase):
     def test_books_by_author_user(self):
         res = self.client().post('/books/author',
                                  headers=self.user_token_headers,
-                                 json={"searchTerm": "JK"})
+                                 json={"searchTerm": "JKRowling"})
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.get_json()['success'], True)
@@ -97,7 +99,7 @@ class BookShopAppTestCase(unittest.TestCase):
     def test_books_by_author_admin(self):
         res = self.client().post('/books/author',
                                  headers=self.admin_token_headers,
-                                 json={"searchTerm": "JK"})
+                                 json={"searchTerm": "JKRowling"})
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.get_json()['success'], True)
@@ -125,7 +127,7 @@ class BookShopAppTestCase(unittest.TestCase):
     def test_books_by_title_admin(self):
         res = self.client().post('/books/author',
                                  headers=self.admin_token_headers,
-                                 json={"searchTerm": "JK"})
+                                 json={"searchTerm": "Harry"})
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.get_json()['success'], True)
@@ -135,7 +137,7 @@ class BookShopAppTestCase(unittest.TestCase):
     # -----------------------
 
     def test_new_book(self):
-        res = self.client().post('/books/new', json={self.new_book})
+        res = self.client().post('/books/new', json=self.new_book)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(res.get_json()['success'], False)
@@ -145,16 +147,16 @@ class BookShopAppTestCase(unittest.TestCase):
     def test_new_book_user(self):
         res = self.client().post('/books/new',
                                  headers=self.user_token_headers,
-                                 json={self.new_book})
+                                 json=self.new_book)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(res.get_json()['success'], False)
-        self.assertEqual(res.get_json()['message'], "Inadequate permissions.")
+        self.assertEqual(res.get_json()['message'], "Permission not found")
 
     def test_new_book_admin(self):
         res = self.client().post('/books/new',
                                  headers=self.admin_token_headers,
-                                 json={self.new_book})
+                                 json=self.new_book)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.get_json()['success'], True)
@@ -164,7 +166,7 @@ class BookShopAppTestCase(unittest.TestCase):
     # -----------------------
 
     def test_edit_book(self):
-        res = self.client().patch('/books/1', json={self.edit_book})
+        res = self.client().patch('/books/1', json=self.edit_book)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(res.get_json()['success'], False)
@@ -174,16 +176,16 @@ class BookShopAppTestCase(unittest.TestCase):
     def test_edit_book_user(self):
         res = self.client().patch('/books/1',
                                   headers=self.user_token_headers,
-                                  json={self.edit_book})
+                                  json=self.edit_book)
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(res.get_json()['success'], False)
-        self.assertEqual(res.get_json()['message'], "Inadequate permissions.")
+        self.assertEqual(res.get_json()['message'], "Permission not found")
 
     def test_edit_book_admin(self):
         res = self.client().patch('/books/1',
                                   headers=self.admin_token_headers,
-                                  json={self.edit_book})
+                                  json=self.edit_book)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.get_json()['success'], True)
@@ -206,7 +208,7 @@ class BookShopAppTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(res.get_json()['success'], False)
-        self.assertEqual(res.get_json()['message'], "Inadequate permissions.")
+        self.assertEqual(res.get_json()['message'], "Permission not found")
 
     def test_delete_book_admin(self):
         res = self.client().delete('/books/1',

@@ -8,7 +8,6 @@ AUTH0_DOMAIN = 'wt597.eu.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'FSNDCapstone'
 
-# AuthError Exception
 '''
     AuthError Exception
     A standardized way to communicate auth failure modes
@@ -20,8 +19,6 @@ class AuthError(Exception):
         self.status_code = status_code
 
 
-# Auth Header
-
 '''
     get_token_auth_header()
     
@@ -31,29 +28,30 @@ class AuthError(Exception):
 '''
 
 def get_token_auth_header():
-    auth_header = request.headers.get("Authorization", None)
+    auth = request.headers.get("Authorization", None)
+    if not auth:
+        raise AuthError({"code": "authorization_header_missing",
+                         "description":
+                             "Authorization header is expected."}, 401)
 
-    if not auth_header:
-        raise AuthError({
-            'code': 'Header missing',
-            'description': 'Authorization header is expected.'
-        }, 401)
+    parts = auth.split()
 
-    header_split = auth_header.split(' ')
+    if parts[0].lower() != "bearer":
+        raise AuthError({"code": "invalid_header",
+                         "description":
+                             "Authorization header must start with"
+                             " Bearer"}, 401)
+    elif len(parts) == 1:
+        raise AuthError({"code": "invalid_header",
+                         "description": "Token not found"}, 401)
+    elif len(parts) > 2:
+        raise AuthError({"code": "invalid_header",
+                         "description":
+                             "Authorization header must be"
+                             " Bearer token"}, 401)
 
-    if len(header_split) != 2:
-        raise AuthError({
-            'code': 'Incorrect header',
-            'description': 'Authorization header is not correct length'
-        }, 401)
-    if header_split[0].lower() != 'bearer':
-        raise AuthError({
-            'code': 'Incorrect Header',
-            'description': 'Authorization header must start with "Bearer".'
-        }, 401)
-
-    return header_split[1]
-
+    token = parts[1]
+    return token
 
 '''
     check_permissions(permission, payload)
@@ -147,7 +145,6 @@ def verify_decode_jwt(token):
         'description': 'Unable to find the appropriate key.'
     }, 400)
 
-
 '''
     @requires_auth(permission) decorator method
     
@@ -169,3 +166,4 @@ def requires_auth(permission=''):
             return f(payload, *args, **kwargs)
         return wrapper
     return requires_auth_decorator
+
