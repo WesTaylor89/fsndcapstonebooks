@@ -4,6 +4,7 @@ from models import Book, db, setup_db, BookSigning
 from auth import AuthError, requires_auth
 from datetime import datetime
 
+# todo: doc strings and comments for this and other files
 
 def create_app():
     app = Flask(__name__)
@@ -251,7 +252,7 @@ Populates DB with dummy data
 # db.session.add(book4)
 # db.session.add(book5)
 # db.session.commit()
-
+#
 # booksigning1 = BookSigning(start_time="2020-07-20 14:00:00",
 #                            book_id="1")
 #

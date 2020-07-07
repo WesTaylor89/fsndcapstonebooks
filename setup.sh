@@ -8,3 +8,5 @@ export admin_token='eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InB6UWFBZHFCbXhm
 
 # Local database URL
 export DATABASE_URL='postgres://Wes:password@localhost:5432/fsndcapstone'
+
+#todo: update tokens
