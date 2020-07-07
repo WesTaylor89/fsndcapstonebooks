@@ -53,7 +53,13 @@ class BookShopAppTestCase(unittest.TestCase):
                          genre="Fantasy",
                          description="Books about wizards")
 
+            book2 = Book(title="Zarry Potter",
+                         author="JKRowling",
+                         genre="Fantasy",
+                         description="Books about wizards")
+
             self.db.session.add(book1)
+            self.db.session.add(book2)
             self.db.session.commit()
 
             booksigning = BookSigning(start_time="2020-07-22 14:00:00",
@@ -195,7 +201,7 @@ class BookShopAppTestCase(unittest.TestCase):
     # -----------------------
 
     def test_delete_book(self):
-        res = self.client().delete('/books/1')
+        res = self.client().delete('/books/2')
 
         self.assertEqual(res.status_code, 401)
         self.assertEqual(res.get_json()['success'], False)
@@ -203,7 +209,7 @@ class BookShopAppTestCase(unittest.TestCase):
                          "Authorization header is expected.")
 
     def test_delete_book_user(self):
-        res = self.client().delete('/books/1',
+        res = self.client().delete('/books/2',
                                    headers=self.user_token_headers)
 
         self.assertEqual(res.status_code, 401)
@@ -211,7 +217,7 @@ class BookShopAppTestCase(unittest.TestCase):
         self.assertEqual(res.get_json()['message'], "Permission not found")
 
     def test_delete_book_admin(self):
-        res = self.client().delete('/books/1',
+        res = self.client().delete('/books/2',
                                    headers=self.admin_token_headers)
 
         self.assertEqual(res.status_code, 200)
