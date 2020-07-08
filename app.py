@@ -1,10 +1,14 @@
+import os
 from flask import Flask, request, jsonify, abort
 from flask_cors import CORS
 from models import Book, db, setup_db, BookSigning
 from auth import AuthError, requires_auth
 from datetime import datetime
+from helper_functions import db_dummy_data
 
-# todo: doc strings and comments for this and other files
+""" 
+Creates app, contains all endpoints and error handlers
+"""
 
 def create_app():
     app = Flask(__name__)
@@ -21,6 +25,17 @@ def create_app():
                              'GET,PUT,POST,DELETE,PATCH')
         return response
 
+    # -----------------------
+    # Populates DB with dummy data
+    # -----------------------
+
+    # db_dummy_data()
+
+    # -----------------------
+    # GET '/home'
+    # Home page route that returns all books in the DB
+    # -----------------------
+
     @app.route("/")
     @app.route("/home", methods=["GET"])
     def home():
@@ -36,6 +51,11 @@ def create_app():
             }), 200
         except:
             abort(400)
+
+    # -----------------------
+    # POST '/books/author'
+    # Returns a list of books with authors who match a search string.
+    # -----------------------
 
     @app.route("/books/author", methods=["POST"])
     @requires_auth(permission="search:books")
@@ -54,6 +74,11 @@ def create_app():
         except:
             abort(400)
 
+    # -----------------------
+    # POST '/books/title'
+    # Returns a list of books with titles who match a search string.
+    # -----------------------
+
     @app.route("/books/title", methods=["POST"])
     @requires_auth(permission="search:books")
     def books_by_title(payload):
@@ -70,6 +95,11 @@ def create_app():
             })
         except:
             abort(400)
+
+    # -----------------------
+    # POST '/books/new'
+    # Posts a new book to the database
+    # -----------------------
 
     @app.route("/books/new", methods=["POST"])
     @requires_auth(permission="post:new_book")
@@ -89,6 +119,11 @@ def create_app():
             }), 200
         except:
             abort(400)
+
+    # -----------------------
+    # PATCH '/books/<int:book_id>'
+    # Updates a chosen book in the database with new data.
+    # -----------------------
 
     @app.route("/books/<int:book_id>", methods=["PATCH"])
     @requires_auth(permission="patch:books")
@@ -124,6 +159,11 @@ def create_app():
         except:
             abort(400)
 
+    # -----------------------
+    # DELETE '/books/<int:book_id>'
+    # Deletes the selected book from the DB
+    # -----------------------
+
     @app.route("/books/<int:book_id>", methods=["DELETE"])
     @requires_auth(permission="delete:book")
     def delete_book(payload, book_id):
@@ -141,6 +181,11 @@ def create_app():
             }), 200
         except:
             abort(400)
+
+    # -----------------------
+    # GET '/books/booksignings'
+    # Returns a list of upcoming book signings. Returns author, title and start time.
+    # -----------------------
 
     @app.route("/books/booksignings", methods=["GET"])
     @requires_auth("search:books")
@@ -168,9 +213,9 @@ def create_app():
         except:
             return abort(400)
 
-    '''
-        Error handler for 400
-    '''
+    # -----------------------
+    # Error handler for 400 error
+    # -----------------------
 
     @app.errorhandler(400)
     def unprocessable(error):
@@ -180,9 +225,9 @@ def create_app():
             "message": "Bad Request"
         }), 400
 
-    '''
-        Error handler for 404
-    '''
+    # -----------------------
+    # Error handler for 404 error
+    # -----------------------
 
     @app.errorhandler(404)
     def unprocessable(error):
@@ -192,9 +237,9 @@ def create_app():
             "message": "Not found"
         }), 404
 
-    '''
-        Error handler for AuthError
-    '''
+    # -----------------------
+    # Error handler for auth error
+    # -----------------------
 
     @app.errorhandler(AuthError)
     def auth_error(error):
@@ -215,54 +260,3 @@ app = create_app()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080, debug=True)
-
-
-"""
-Populates DB with dummy data
-"""
-
-# book1 = Book(title="Harry Potter",
-#              author="J.K.Rowling",
-#              genre="Fantasy",
-#              description="Books about wizards")
-#
-# book2 = Book(title="Lord of the rings",
-#              author="J.R.R.Tolkien",
-#              genre="Fantasy",
-#              description="Elves, Trolls, Goblins etc")
-#
-# book3 = Book(title="Jamie's kitchen",
-#              author="Jamie Oliver",
-#              genre="Cook Book",
-#              description="Jamie's favourite recipes")
-#
-# book4 = Book(title="If it Bleeds",
-#              author="Stephen King",
-#              genre="Horror",
-#              description="4 Stories in 1 book")
-#
-# book5 = Book(title="History of World War 2",
-#              author="Chris McNab",
-#              genre="History",
-#              description="Events of 1939-1945")
-#
-# db.session.add(book1)
-# db.session.add(book2)
-# db.session.add(book3)
-# db.session.add(book4)
-# db.session.add(book5)
-# db.session.commit()
-#
-# booksigning1 = BookSigning(start_time="2020-07-20 14:00:00",
-#                            book_id="1")
-#
-# booksigning2 = BookSigning(start_time="2020-07-22 14:00:00",
-#                            book_id="2")
-#
-# booksigning3 = BookSigning(start_time="2020-07-22 16:00:00",
-#                            book_id="2")
-#
-# db.session.add(booksigning1)
-# db.session.add(booksigning2)
-# db.session.add(booksigning3)
-# db.session.commit()

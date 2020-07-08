@@ -4,10 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
 load_dotenv()
+
 db = SQLAlchemy()
 
 database_path = os.getenv('DATABASE_URL')
-database_path = 'postgres://Wes:password@localhost:5432/fsndcapstone'
+# database_path = 'postgres://Wes:password@localhost:5432/fsndcapstone'
 
 # ---------------------------------------------------------
 # setup_db(app)
@@ -21,7 +22,7 @@ def setup_db(app, db_path=database_path):
     db.init_app(app)
 
     # Uncomment db.drop_all() if running unittests
-    db.drop_all()
+    # db.drop_all()
     db.create_all()
 
 
