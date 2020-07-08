@@ -4,16 +4,15 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
 load_dotenv()
+database_path = os.getenv('DATABASE_URL')
 
 db = SQLAlchemy()
 
-database_path = os.getenv('DATABASE_URL')
-# database_path = 'postgres://Wes:password@localhost:5432/fsndcapstone'
 
-# ---------------------------------------------------------
-# setup_db(app)
-#    Sets up the DB
-# ---------------------------------------------------------
+"""
+Setup_db
+Sets up database.
+"""
 
 def setup_db(app, db_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = db_path
@@ -25,6 +24,11 @@ def setup_db(app, db_path=database_path):
     # db.drop_all()
     db.create_all()
 
+
+"""
+class Book
+Sets up the book table.
+"""
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,6 +55,11 @@ class Book(db.Model):
             'description': self.description
         }
 
+
+"""
+class Book
+Sets up the booksigning table.
+"""
 
 class BookSigning(db.Model):
     id = db.Column(db.Integer, primary_key=True)
