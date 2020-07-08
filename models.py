@@ -21,7 +21,7 @@ def setup_db(app, db_path=database_path):
     db.init_app(app)
 
     # Uncomment db.drop_all() if running unittests
-    # db.drop_all()
+    db.drop_all()
     db.create_all()
 
 
